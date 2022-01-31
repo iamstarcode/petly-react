@@ -3,7 +3,7 @@ export type LayoutMainProps = {
 }
 
 const LayoutMain = ({ children }: LayoutMainProps): JSX.Element => {
-  return <main className='layout'>{children}</main>
+  return <main >{children}</main>
 }
 
 export default LayoutMain
