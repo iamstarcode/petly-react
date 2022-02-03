@@ -71,13 +71,13 @@ const IndexPage: React.FC = () => {
     setTabs([...nTab])
   }
 
-
+  
   return (
     <>
       <div className="sticky top-0 z-[60] bg-white px-5 dark:bg-gray-900 lg:px-16 py-2 lg:py-4 dark:shadow-lg shadow-sm ">
         <nav className={clsx(
           'w-full  transition-colors items-center justify-between ',
-          'flex flex-col md:flex-row',
+          'flex flex-col lg:flex-row',
           'container max-w-7xl mx-auto'
         )
         }>
@@ -272,7 +272,7 @@ const IndexPage: React.FC = () => {
             ))}
             {byData && byData.pets?.map(({ ...pet }: PetCardPropsType, index: number) => (
               <div key={index} className="key">
-                <PetCard {...pet} />
+                <PetCard {...pet}/> {/* Spread syntax */}
               </div>
             ))}
           </div>

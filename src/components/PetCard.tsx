@@ -48,3 +48,4 @@ const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state}) =
 };
 
 export default PetCard;
+

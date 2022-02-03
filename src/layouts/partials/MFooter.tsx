@@ -18,7 +18,7 @@ const MFooter = (theme: any) => {
             <img className="md:block hidden absolute right-32 top-48" src={ballrolls} alt="Ball Rolls" />
             <div className="flex justify-center">
                 <div className="md:pt-44 pt-10 z-50">
-                    <h1 className="md:text-6xl text-3xl font-semibold text-i-gray dark:text-i-gray-2">
+                    <h1 className="md:text-6xl text-3xl font-semibold text-slate-600/90 dark:text-i-gray-2">
                         <span className="text-i-primary font-bold">Need</span> help with <br /> Adopting a pet?
                     </h1>
                     <button type="button" className="bg-i-primary text-white text-sm px-10 py-4 rounded-full shadow mt-5 hover:bg-opacity-90">
