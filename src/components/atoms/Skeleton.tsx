@@ -1,8 +1,5 @@
 import * as React from 'react';
 
-interface ISkeletonProps {
-    key:number
-}
 
 const App = (): JSX.Element => {
   return (

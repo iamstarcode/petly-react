@@ -19,7 +19,8 @@ module.exports = {
         'i-foreground':'#8588A3',
         'i-gray-2':'#F8FAFD',
         'i-neutral':'#0E182A',
-        'i-neutral-2':'#182039'
+        'i-neutral-2':'#182039',
+        'skeleton': '#DBE2F4'
       }
     }
   },

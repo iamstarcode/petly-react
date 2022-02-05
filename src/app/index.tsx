@@ -3,9 +3,9 @@ import LayoutMain from '@/layouts'
 
 const App = () => {
   return (
-    <LayoutMain>
+    
       <MyRoutes />
-    </LayoutMain>
+  
   )
 }
 

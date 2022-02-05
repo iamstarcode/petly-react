@@ -4,25 +4,17 @@ import illustration from '@/assets/img/illustration.svg'
 import useTheme from '@/hooks/useTheme'
 import clsx from 'clsx'
 import useSWR from 'swr'
-import { useEffect, useState } from 'react'
+import React, { FormEvent, HtmlHTMLAttributes, useEffect, useState } from 'react'
 import useWindowResize from '@/hooks/useWindowResize'
 import Skeleton from '@/components/atoms/Skeleton'
 import PetCard from '@/components/PetCard'
 import { PetCardPropsType } from '@/types/index'
-import dog from '@/assets/img/dog.svg'
-import cat from '@/assets/img/cat.svg'
-import bird from '@/assets/img/bird.svg'
-import rabbit from '@/assets/img/rabbit.svg'
-import reptile from '@/assets/img/reptile.svg'
-import MFooter from '@/layouts/partials/MFooter'
+
+
 const IndexPage: React.FC = () => {
 
-  const [isMenuOpen, setMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme()
-
-  const { width, height } = useWindowResize();
-
-  const [skeletonCount, setSkelentonCount] = useState<number[]>();
+  
+  const {width} = useWindowResize();
   useEffect(() => {
     if (width < 768) {
       setSkelentonCount([0])
@@ -34,32 +26,24 @@ const IndexPage: React.FC = () => {
       }
   }, [width])
 
-  //const url: string = 'https://pets-v2.dev-apis.com/pets'
-  const [url, setUrl] = useState('')
-  useEffect(() => {
-    setUrl('https://pets-v2.dev-apis.com/pets?animal=&location=&breed=')
-  })
-  //const fetcher: Fetcher<string, > = (url: string) => fetch(url).then(resp => console.log(resp.json()))
+  const [skeletonCount, setSkelentonCount] = useState<number[]>();
+  
   const fetcher = (url: string) => fetch(url).then(resp => resp.json())
+  const [url, setUrl] = useState('https://pets-v2.dev-apis.com/pets?animal=&location=&breed=')
   const { data, error } = useSWR(url, fetcher)
 
   //The Browse by section
-  const [param, setParam] = useState('');
-  const [byUrl, setByUrl] = useState('')
-  const [tab, setTabs] = useState<{ id: number, name: string, url: string, active: boolean }[]>([])
+  const [param, setParam] = useState('dog');
+  const [byUrl, setByUrl] = useState(`https://pets-v2.dev-apis.com/pets?animal=${param}`)
+  const [tab, setTabs] = useState<{ id: number, name: string, url: string, active: boolean }[]>([
+    { id: 0, name: 'dog', url: 'https://pets-v2.dev-apis.com/pets?animal=dog', active: true },
+    { id: 1, name: 'cat', url: 'https://pets-v2.dev-apis.com/pets?animal=cat', active: false },
+    { id: 2, name: 'bird', url: 'https://pets-v2.dev-apis.com/pets?animal=bird', active: false },
+    { id: 3, name: 'rabbit', url: 'https://pets-v2.dev-apis.com/pets?animal=rabbit', active: false },
+    { id: 4, name: 'reptile', url: 'https://pets-v2.dev-apis.com/pets?animal=reptile', active: false },
+  ])
 
-  //initializations
-  useEffect(() => {
-    setParam('dog')
-    setByUrl('https://pets-v2.dev-apis.com/pets?animal=dog')
-    setTabs([
-      { id: 0, name: 'dog', url: 'https://pets-v2.dev-apis.com/pets?animal=dog', active: true },
-      { id: 1, name: 'cat', url: 'https://pets-v2.dev-apis.com/pets?animal=cat', active: false },
-      { id: 2, name: 'bird', url: 'https://pets-v2.dev-apis.com/pets?animal=bird', active: false },
-      { id: 3, name: 'rabbit', url: 'https://pets-v2.dev-apis.com/pets?animal=rabbit', active: false },
-      { id: 4, name: 'reptile', url: 'https://pets-v2.dev-apis.com/pets?animal=reptile', active: false },
-    ])
-  }, [])
+  //Handle the selection by section 
   const { data: byData, error: byError } = useSWR(byUrl, fetcher)
   const handleSelectionBy = (index: number) => {
     const nTab = tab.map((item, i) => {
@@ -71,64 +55,14 @@ const IndexPage: React.FC = () => {
     setTabs([...nTab])
   }
 
-  
+  //Form input handling and submit
+  const [formState, setFormState] = useState({ location: "", animal: "", breed: "" })
+  const handlSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setUrl(`https://pets-v2.dev-apis.com/pets?animal=${formState.animal}&location=${formState.location}&breed=`)
+  }
   return (
     <>
-      <div className="sticky top-0 z-[60] bg-white px-5 dark:bg-gray-900 lg:px-16 py-2 lg:py-4 dark:shadow-lg shadow-sm ">
-        <nav className={clsx(
-          'w-full  transition-colors items-center justify-between ',
-          'flex flex-col lg:flex-row',
-          'container max-w-7xl mx-auto'
-        )
-        }>
-          <div className="flex w-full justify-between items-center">
-            <div className=""><a href="/">
-              <svg width="113" height="50" viewBox="0 0 113 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M56.9176 34H59.5511V27.8636H63.1307C67.179 27.8636 69.1818 25.4176 69.1818 22.196C69.1818 18.983 67.196 16.5455 63.1392 16.5455H56.9176V34ZM59.5511 25.6307V18.804H62.858C65.4659 18.804 66.5312 20.2188 66.5312 22.196C66.5312 24.1733 65.4659 25.6307 62.892 25.6307H59.5511ZM77.5426 34.2642C80.3977 34.2642 82.4176 32.858 82.9972 30.7273L80.5852 30.2926C80.125 31.5284 79.017 32.1591 77.5682 32.1591C75.3864 32.1591 73.9205 30.7443 73.8523 28.2216H83.1591V27.3182C83.1591 22.5881 80.3295 20.7386 77.3636 20.7386C73.7159 20.7386 71.3125 23.517 71.3125 27.5398C71.3125 31.6051 73.6818 34.2642 77.5426 34.2642ZM73.8608 26.3125C73.9631 24.4545 75.3097 22.8438 77.3807 22.8438C79.358 22.8438 80.6534 24.3097 80.6619 26.3125H73.8608ZM92.0973 20.9091H89.4126V17.7727H86.8643V20.9091H84.9467V22.9545H86.8643V30.6847C86.8558 33.0625 88.6712 34.2131 90.6825 34.1705C91.4922 34.1619 92.0376 34.0085 92.3359 33.8977L91.8757 31.7926C91.7053 31.8267 91.3899 31.9034 90.9808 31.9034C90.1541 31.9034 89.4126 31.6307 89.4126 30.1562V22.9545H92.0973V20.9091ZM97.7457 16.5455H95.1974V34H97.7457V16.5455ZM102.785 38.9091C104.89 38.9091 106.219 37.8097 106.978 35.7472L112.39 20.9347L109.637 20.9091L106.322 31.0682H106.185L102.87 20.9091H100.143L104.933 34.1705L104.617 35.0398C103.969 36.7784 103.058 36.9233 101.66 36.5398L101.046 38.6278C101.353 38.7642 102.018 38.9091 102.785 38.9091Z" fill={theme === 'light' ? '#344062' : '#FFFF'}></path><circle cx="25" cy="25" r="25" fill={theme === 'light' ? '#0D75FF' : '#CB2E42'}></circle><path d="M18.7107 35H30.3122C31.4961 35 32.4562 34.04 32.4562 32.855V23.3425C34.4689 23.2625 35.6728 21.03 34.5977 19.295L33.9701 18.2825C33.7326 17.8988 33.4009 17.5822 33.0067 17.3626C32.6124 17.1429 32.1686 17.0276 31.7173 17.0275H29.9234V16.2325C29.9234 16.0706 29.8915 15.9104 29.8295 15.7608C29.7676 15.6113 29.6768 15.4754 29.5623 15.361C29.4479 15.2465 29.312 15.1558 29.1624 15.0938C29.0129 15.0319 28.8526 15 28.6907 15C28.2893 15.0002 27.8919 15.0794 27.5211 15.2331C27.1503 15.3869 26.8134 15.6121 26.5297 15.896C26.246 16.18 26.021 16.517 25.8675 16.8878C25.7141 17.2587 25.6352 17.6561 25.6353 18.0575V22.3775C24.0376 22.535 22.8312 23.29 21.9449 24.355C20.9673 25.53 20.3909 27.0613 20.0484 28.5325C19.7034 30.01 19.5821 31.48 19.5446 32.5725C19.5296 33.04 19.5296 33.4425 19.5346 33.75H18.7107C18.2304 33.75 17.7606 33.6097 17.359 33.3463C16.9574 33.0829 16.6415 32.7079 16.4503 32.2674C16.259 31.8268 16.2007 31.34 16.2824 30.8668C16.3642 30.3936 16.5825 29.9546 16.9105 29.6037L18.0607 28.37C18.8533 27.5199 19.2851 26.3954 19.2651 25.2333C19.245 24.0712 18.7747 22.9622 17.9531 22.14L16.8242 21.0113C16.7666 20.9516 16.6976 20.9039 16.6214 20.8712C16.5451 20.8384 16.4631 20.8212 16.3801 20.8205C16.2971 20.8197 16.2148 20.8356 16.1379 20.867C16.0611 20.8984 15.9913 20.9448 15.9326 21.0035C15.874 21.0622 15.8275 21.132 15.7961 21.2088C15.7647 21.2856 15.7489 21.3679 15.7496 21.4509C15.7503 21.5339 15.7675 21.6159 15.8003 21.6921C15.8331 21.7684 15.8807 21.8373 15.9404 21.895L17.0693 23.0237C17.6624 23.6166 18.002 24.4166 18.0164 25.255C18.0309 26.0934 17.7191 26.9046 17.1468 27.5175L15.9966 28.7513C15.5037 29.2805 15.176 29.9421 15.0536 30.6549C14.9312 31.3677 15.0195 32.1007 15.3076 32.7641C15.5957 33.4275 16.0712 33.9924 16.6757 34.3895C17.2802 34.7867 17.9874 34.9988 18.7107 35ZM28.6745 16.25V17.6525C28.6745 17.8183 28.7403 17.9772 28.8575 18.0944C28.9748 18.2117 29.1338 18.2775 29.2995 18.2775H31.7173C32.2024 18.2775 32.6525 18.5275 32.9075 18.94L33.5363 19.9537C33.6679 20.1661 33.7404 20.4097 33.7463 20.6595C33.7522 20.9092 33.6912 21.156 33.5698 21.3743C33.4483 21.5927 33.2707 21.7746 33.0554 21.9013C32.84 22.028 32.5948 22.0948 32.3449 22.095H31.8324C31.6666 22.095 31.5076 22.1608 31.3904 22.2781C31.2731 22.3953 31.2073 22.5542 31.2073 22.72V32.855C31.2073 33.3488 30.8072 33.75 30.3122 33.75H29.4171V32.855C29.4174 31.8832 29.0317 30.951 28.3448 30.2635C27.6579 29.576 26.726 29.1894 25.7541 29.1887H24.4864C24.3207 29.1887 24.1617 29.2546 24.0445 29.3718C23.9272 29.489 23.8614 29.648 23.8614 29.8137C23.8614 29.9795 23.9272 30.1385 24.0445 30.2557C24.1617 30.3729 24.3207 30.4387 24.4864 30.4387H25.7529C27.0868 30.4387 28.1682 31.52 28.1682 32.855V33.75H20.7847C20.7785 33.4575 20.7785 33.07 20.7935 32.6138C20.8285 31.5688 20.9435 30.1888 21.2648 28.8163C21.5861 27.4363 22.1024 26.1175 22.905 25.1538C23.6888 24.215 24.7527 23.5975 26.2604 23.5975C26.4262 23.5975 26.5852 23.5317 26.7024 23.4144C26.8196 23.2972 26.8855 23.1383 26.8855 22.9725V18.0575C26.8855 17.065 27.6843 16.2587 28.6732 16.25H28.6745Z" fill="white"></path></svg></a></div>
-            <div onClick={() => setMenuOpen(true)} className={clsx('block lg:hidden ', { 'hidden': isMenuOpen })} >
-              <button type="button" className="appearance-none focus:outline-none flex items-center px-3 py-2">
-                <svg className="fill-current text-teal-action-color h-5 w-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" fill="#344062"></path></svg>
-              </button>
-            </div>
-            <div onClick={() => setMenuOpen(false)} className={clsx('block lg:hidden', { 'hidden': !isMenuOpen })}>
-              <button type="button" className="appearance-none focus:outline-none flex items-center px-3 py-2">
-                <svg className="fill-current text-teal-action-color h-5 w-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path fillRule="evenodd" d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z" fill="#344062"></path></svg></button></div>
-          </div>
-          <div className={clsx("w-full mt-2 flex-col flex-grow justify-start  lg:justify-end lg:flex-row lg:flex", { 'hidden': !isMenuOpen })}>
-            <div className="block hover:text-blue-800 dark:text-white pb-3 md:pb-0 lg:inline-block font-medium">
-              <div className="w-28 flex justify-between border border-themeborder dark:border-gray-800 px-1 py-1 rounded-xl">
-                <button onClick={toggleTheme}
-                  className={clsx("px-4 py-2 rounded-lg",
-                    {
-                      'text-i-primary bg-i-gray-2': theme === 'light',
-                      'text-i-gray': theme === 'dark'
-                    })}
-                >
-                  <svg className="fill-current" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.62988 14.4292L6.3866 12.6292C5.77278 12.4959 5.18807 12.2529 4.66063 11.9117L4.62988 14.4292Z"></path><path d="M10.3699 0.571045L8.61365 2.3708C9.22749 2.5042 9.81219 2.74735 10.3396 3.08855L10.3699 0.571045Z"></path><path d="M2.37102 8.61353L0.570801 10.3698L3.08826 10.3393C2.74717 9.81193 2.50418 9.22729 2.37102 8.61353Z"></path><path d="M12.629 6.38676L14.4292 4.63L11.9117 4.66075C12.2528 5.18819 12.4958 5.77292 12.629 6.38676Z"></path><path d="M3.0885 4.66051L0.571045 4.62976L2.37126 6.38651C2.50416 5.77259 2.74716 5.18781 3.0885 4.66051Z"></path><path d="M11.9115 10.3395L14.429 10.37L12.6287 8.61353C12.4958 9.22744 12.2528 9.8122 11.9115 10.3395Z"></path><path d="M6.3866 2.3708L4.62988 0.570801L4.66063 3.0883C5.18807 2.74719 5.77278 2.50412 6.3866 2.3708Z"></path><path d="M8.61316 12.6292L10.3699 14.429L10.3391 11.9117C9.81163 12.2528 9.22695 12.4958 8.61316 12.6292Z"></path><path d="M3.18803 10.4905L2.19629 12.8032L4.50928 11.812C3.99374 11.4536 3.54631 11.0061 3.18803 10.4905Z"></path><path d="M11.8119 4.50978L12.8031 2.19678L10.4906 3.18803C11.0061 3.54649 11.4536 3.9941 11.8119 4.50978Z"></path><path d="M2.25001 7.50007C2.25001 7.18057 2.28326 6.86907 2.33801 6.56482L0 7.49982L2.33801 8.43482C2.28087 8.12648 2.25142 7.81365 2.25001 7.50007Z"></path><path d="M15 7.50007L12.662 6.56482C12.7167 6.86907 12.75 7.18057 12.75 7.50007C12.75 7.81982 12.7167 8.13132 12.662 8.43532L15 7.50007Z"></path><path d="M4.50977 3.18778L2.19678 2.19653L3.18802 4.50954C3.54661 3.99395 3.99418 3.54637 4.50977 3.18778Z"></path><path d="M10.4901 11.812L12.8031 12.8032L11.8119 10.4905C11.4533 11.006 11.0057 11.4536 10.4901 11.812Z"></path><path d="M8.43484 2.338L7.49984 0L6.56484 2.338C6.86859 2.28325 7.18009 2.25 7.49984 2.25C7.81959 2.25 8.13109 2.28325 8.43484 2.338Z"></path><path d="M6.56494 12.662L7.49994 15L8.43494 12.662C8.13119 12.7167 7.81969 12.75 7.49994 12.75C7.18019 12.75 6.86869 12.7167 6.56494 12.662Z"></path><path d="M7.49997 12.25C10.1233 12.25 12.2499 10.1234 12.2499 7.5C12.2499 4.87665 10.1233 2.75 7.49997 2.75C4.87663 2.75 2.75 4.87665 2.75 7.5C2.75 10.1234 4.87663 12.25 7.49997 12.25Z"></path>
-                  </svg>
-                </button>
-                <button onClick={toggleTheme} className={
-                  clsx("px-4 py-2 rounded-lg",
-                    { 'text-i-gray': theme === 'light' },
-                    { 'dark:bg-[#172039] text-i-primary': theme === 'dark' })}>
-                  <svg className="fill-current" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.62553 0.26C5.71705 0.371204 5.77312 0.507297 5.78649 0.650694C5.79986 0.794091 5.76992 0.938203 5.70053 1.06441C5.15848 2.05958 4.87539 3.17508 4.87733 4.30829C4.87733 8.07814 7.95074 11.1308 11.7386 11.1308C12.2327 11.1308 12.7137 11.0792 13.1759 10.9808C13.3176 10.9501 13.4652 10.9618 13.6003 11.0145C13.7353 11.0672 13.8519 11.1585 13.9354 11.277C14.0235 11.4003 14.0684 11.5492 14.0632 11.7006C14.0579 11.852 14.0028 11.9974 13.9063 12.1142C13.1709 13.0175 12.2433 13.7453 11.1909 14.2445C10.1385 14.7437 8.98801 15.0018 7.82323 15C3.50095 15 0 11.518 0 7.22779C0 3.99891 1.98206 1.22942 4.8042 0.0556166C4.94478 -0.00379348 5.10084 -0.0159871 5.24894 0.0208674C5.39705 0.0577219 5.52919 0.141635 5.62553 0.26ZM4.5548 1.22848C3.46964 1.81053 2.56246 2.6757 1.92968 3.73205C1.2969 4.78839 0.962153 5.99644 0.961027 7.22779C0.961027 10.9967 4.03538 14.0493 7.82323 14.0493C8.7303 14.0509 9.62866 13.8726 10.4663 13.5246C11.304 13.1767 12.0644 12.6661 12.7034 12.0224C12.3874 12.0617 12.0658 12.0814 11.7386 12.0814C7.41632 12.0814 3.9163 8.59941 3.9163 4.30923C3.9163 3.21512 4.1432 2.17352 4.5548 1.22848Z"></path><path d="M10.1204 2.95082C10.1338 2.91022 10.1597 2.87489 10.1944 2.84985C10.2291 2.82481 10.2707 2.81133 10.3135 2.81133C10.3563 2.81133 10.398 2.82481 10.4326 2.84985C10.4673 2.87489 10.4932 2.91022 10.5067 2.95082L10.8695 4.04024C11.0317 4.52589 11.4124 4.90653 11.898 5.06873L12.9875 5.43155C13.0281 5.445 13.0635 5.47089 13.0885 5.50557C13.1135 5.54024 13.127 5.58192 13.127 5.62469C13.127 5.66745 13.1135 5.70914 13.0885 5.74381C13.0635 5.77848 13.0281 5.80437 12.9875 5.81782L11.898 6.18065C11.6585 6.26045 11.4409 6.39493 11.2623 6.57345C11.0838 6.75197 10.9493 6.96961 10.8695 7.20913L10.5067 8.29855C10.4932 8.33915 10.4673 8.37448 10.4326 8.39952C10.398 8.42456 10.3563 8.43804 10.3135 8.43804C10.2707 8.43804 10.2291 8.42456 10.1944 8.39952C10.1597 8.37448 10.1338 8.33915 10.1204 8.29855L9.75753 7.20913C9.67772 6.96961 9.54323 6.75197 9.3647 6.57345C9.18618 6.39493 8.96852 6.26045 8.72899 6.18065L7.63952 5.81782C7.59891 5.80437 7.56358 5.77848 7.53854 5.74381C7.51349 5.70914 7.50002 5.66745 7.50002 5.62469C7.50002 5.58192 7.51349 5.54024 7.53854 5.50557C7.56358 5.47089 7.59891 5.445 7.63952 5.43155L8.72899 5.06873C8.96852 4.98892 9.18618 4.85444 9.3647 4.67592C9.54323 4.4974 9.67772 4.27976 9.75753 4.04024L10.1204 2.95082ZM12.9978 0.092267C13.0071 0.0655718 13.0244 0.0424236 13.0475 0.0260408C13.0705 0.0096579 13.098 0.000854492 13.1263 0.000854492C13.1545 0.000854492 13.1821 0.0096579 13.2051 0.0260408C13.2281 0.0424236 13.2455 0.0655718 13.2547 0.092267L13.4966 0.817922C13.6045 1.14231 13.8585 1.39638 14.1829 1.5042L14.9086 1.74609C14.9353 1.75534 14.9585 1.77268 14.9749 1.7957C14.9912 1.81872 15.0001 1.84627 15.0001 1.87453C15.0001 1.90278 14.9912 1.93034 14.9749 1.95335C14.9585 1.97637 14.9353 1.99372 14.9086 2.00297L14.1829 2.24486C14.0231 2.29804 13.8778 2.38775 13.7587 2.50688C13.6395 2.62601 13.5498 2.77127 13.4966 2.93114L13.2547 3.65679C13.2455 3.68349 13.2281 3.70663 13.2051 3.72302C13.1821 3.7394 13.1545 3.7482 13.1263 3.7482C13.098 3.7482 13.0705 3.7394 13.0475 3.72302C13.0244 3.70663 13.0071 3.68349 12.9978 3.65679L12.7559 2.93114C12.7027 2.77127 12.613 2.62601 12.4939 2.50688C12.3748 2.38775 12.2295 2.29804 12.0696 2.24486L11.3439 2.00297C11.3172 1.99372 11.2941 1.97637 11.2777 1.95335C11.2613 1.93034 11.2525 1.90278 11.2525 1.87453C11.2525 1.84627 11.2613 1.81872 11.2777 1.7957C11.2941 1.77268 11.3172 1.75534 11.3439 1.74609L12.0696 1.5042C12.394 1.39638 12.6481 1.14231 12.7559 0.817922L12.9978 0.0932046V0.092267Z"></path>
-                  </svg>
-                </button>
-                {/*   <Toggler /> */}
-              </div>
-            </div>
-          </div>
-
-          {/*  <section className={clsx('flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between', 'w-full')}>
-        <div className='w-full md:w-auto'>
-          <h2>Related Link</h2>
-          <RelatedList />
-        </div>
-        <Toggler />
-      </section> */}
-        </nav>
-      </div>
-      <div className="max-w-[1440px] mx-auto">
         <header className="bg-i-primary/5 md:flex h-[63rem] md:h-[39.4rem] md:px-14 px-4 pt-6">
           <div className="md:w-6/12 px-1 relative">
             <div className="md:pt-16 pt-9">
@@ -138,7 +72,10 @@ const IndexPage: React.FC = () => {
               </h1>
               <p className="text-slate-700 pt-2 dark:text-gray-300">Pet Adoption is quickly becoming the preferred way to find a new dog, puppy, cat or kitten.</p></div>
             <div className="md:bottom-5 md:absolute  z-50 relative py-12 md:py-0">
-              <form className="bg-white dark:bg-i-neutral shadow-sm max-w-screen-md  rounded px-6 py-4">
+              <form
+                method="POST"
+                onSubmit={(e) => handlSubmit(e)}
+                className="bg-white dark:bg-i-neutral shadow-sm max-w-screen-md  rounded px-6 py-4">
                 <div className="md:flex items-center justify-between md:rounded-full bg-i-gray-2 dark:bg-i-neutral-2 py-5 md:py-0 md:pl-8 pl-4 pr-4 md:pr-0">
                   <div className="md:flex md:space-x-10">
                     <div className="relative flex items-center">
@@ -146,7 +83,11 @@ const IndexPage: React.FC = () => {
                         <path d="M6 0C9.31385 0 12 2.39526 12 5.35023C12 7.61105 10.2185 10.0749 6.70154 12.7681C6.50598 12.9179 6.25665 13.0002 5.99885 13C5.74104 12.9998 5.49188 12.9171 5.29662 12.767L5.064 12.587C1.70277 9.96406 0 7.56057 0 5.35023C0 2.39526 2.68615 0 6 0ZM6 0.823113C4.65352 0.823113 3.36218 1.30008 2.41007 2.14908C1.45797 2.99808 0.923077 4.14957 0.923077 5.35023C0.923077 7.27193 2.49108 9.4861 5.67015 11.9664L5.89969 12.1437C5.9276 12.1651 5.96319 12.1768 6 12.1768C6.03681 12.1768 6.0724 12.1651 6.10031 12.1437C9.43323 9.59091 11.0769 7.31748 11.0769 5.35023C11.0769 4.75572 10.9456 4.16704 10.6905 3.61778C10.4353 3.06853 10.0614 2.56946 9.58993 2.14908C9.11849 1.72869 8.55882 1.39523 7.94285 1.16772C7.32689 0.940211 6.66671 0.823113 6 0.823113ZM6 3.29245C6.61204 3.29245 7.19901 3.50925 7.63179 3.89516C8.06456 4.28107 8.30769 4.80448 8.30769 5.35023C8.30769 5.89599 8.06456 6.4194 7.63179 6.80531C7.19901 7.19122 6.61204 7.40802 6 7.40802C5.38796 7.40802 4.80099 7.19122 4.36822 6.80531C3.93544 6.4194 3.69231 5.89599 3.69231 5.35023C3.69231 4.80448 3.93544 4.28107 4.36822 3.89516C4.80099 3.50925 5.38796 3.29245 6 3.29245ZM6 4.11557C5.63278 4.11557 5.2806 4.24565 5.02093 4.47719C4.76126 4.70874 4.61538 5.02278 4.61538 5.35023C4.61538 5.67769 4.76126 5.99173 5.02093 6.22328C5.2806 6.45482 5.63278 6.5849 6 6.5849C6.36722 6.5849 6.71941 6.45482 6.97907 6.22328C7.23874 5.99173 7.38462 5.67769 7.38462 5.35023C7.38462 5.02278 7.23874 4.70874 6.97907 4.47719C6.71941 4.24565 6.36722 4.11557 6 4.11557Z" fill="#8588A3">
                         </path>
                       </svg>
-                      <select className="md:px-2 px-5 md:w-36 w-full py-3 bg-i-gray-2 dark:bg-i-neutral-2 text-sm text-i-foreground focus:outline-none" id="location">
+                      <select
+                        name="location"
+                        onChange={(e) => { setFormState({ ...formState, location: e.currentTarget.value }) }}
+                        value={formState.location}
+                        className="md:px-2 px-5 md:w-36 w-full py-3 bg-i-gray-2 dark:bg-i-neutral-2 text-sm text-i-foreground focus:outline-none" id="location">
                         <option value=""> All Locations</option>
                         <option value="Seattle, WA">Seattle, WA</option>
                         <option value="San Francisco, CA">San Francisco, CA</option>
@@ -161,7 +102,9 @@ const IndexPage: React.FC = () => {
                     </div>
                     <div className="relative flex items-center">
                       <svg className="absolute -left-2" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.96822 16H12.2482C13.1952 16 13.9632 15.232 13.9632 14.284V6.674C15.5732 6.61 16.5362 4.824 15.6762 3.436L15.1742 2.626C14.9842 2.31907 14.7189 2.06575 14.4036 1.89005C14.0882 1.71435 13.7332 1.62208 13.3722 1.622H11.9372V0.986C11.9372 0.856517 11.9117 0.728301 11.8622 0.608674C11.8126 0.489047 11.74 0.380351 11.6484 0.288793C11.5569 0.197234 11.4482 0.124606 11.3285 0.0750549C11.2089 0.0255037 11.0807 0 10.9512 0C10.6301 0.000131295 10.3122 0.0635031 10.0156 0.186497C9.71904 0.309491 9.44958 0.489699 9.22263 0.716831C8.99569 0.943963 8.8157 1.21357 8.69295 1.51026C8.5702 1.80695 8.50709 2.12492 8.50722 2.446V5.902C7.22922 6.028 6.26422 6.632 5.55522 7.484C4.77322 8.424 4.31222 9.649 4.03822 10.826C3.76222 12.008 3.66522 13.184 3.63522 14.058C3.62322 14.432 3.62322 14.754 3.62722 15H2.96822C2.58403 15 2.2082 14.8878 1.88696 14.6771C1.56572 14.4663 1.31307 14.1663 1.16007 13.8139C1.00708 13.4615 0.960419 13.072 1.02582 12.6935C1.09123 12.3149 1.26585 11.9637 1.52822 11.683L2.44822 10.696C3.08228 10.0159 3.42767 9.11631 3.41163 8.18663C3.39558 7.25696 3.01937 6.3698 2.36222 5.712L1.45922 4.809C1.41309 4.76124 1.35792 4.72315 1.29692 4.69695C1.23592 4.67074 1.17031 4.65695 1.10392 4.65637C1.03753 4.6558 0.971689 4.66845 0.91024 4.69359C0.848792 4.71873 0.792966 4.75586 0.74602 4.8028C0.699073 4.84975 0.661947 4.90557 0.636806 4.96702C0.611666 5.02847 0.599015 5.09431 0.599592 5.1607C0.600169 5.22709 0.613962 5.2927 0.640167 5.3537C0.666371 5.4147 0.704462 5.46988 0.752217 5.516L1.65522 6.419C2.12963 6.89326 2.40127 7.53326 2.41284 8.20397C2.42441 8.87468 2.17499 9.52366 1.71722 10.014L0.797217 11.001C0.402935 11.4244 0.140773 11.9537 0.0428722 12.5239C-0.0550289 13.0942 0.0155855 13.6806 0.246058 14.2113C0.476531 14.742 0.856846 15.1939 1.34038 15.5116C1.82391 15.8293 2.38964 15.9991 2.96822 16ZM10.9382 1V2.122C10.9382 2.25461 10.9909 2.38179 11.0847 2.47555C11.1784 2.56932 11.3056 2.622 11.4382 2.622H13.3722C13.7602 2.622 14.1202 2.822 14.3242 3.152L14.8272 3.963C14.9325 4.13288 14.9905 4.3278 14.9952 4.5276C14.9999 4.7274 14.9511 4.92483 14.854 5.09947C14.7568 5.27412 14.6148 5.41965 14.4425 5.521C14.2703 5.62236 14.0741 5.67587 13.8742 5.676H13.4642C13.3316 5.676 13.2044 5.72868 13.1107 5.82245C13.0169 5.91621 12.9642 6.04339 12.9642 6.176V14.284C12.9642 14.679 12.6442 15 12.2482 15H11.5322V14.284C11.5325 13.5066 11.224 12.7608 10.6745 12.2108C10.1251 11.6608 9.37966 11.3515 8.60222 11.351H7.58822C7.45561 11.351 7.32843 11.4037 7.23466 11.4974C7.1409 11.5912 7.08822 11.7184 7.08822 11.851C7.08822 11.9836 7.1409 12.1108 7.23466 12.2046C7.32843 12.2983 7.45561 12.351 7.58822 12.351H8.60122C9.66822 12.351 10.5332 13.216 10.5332 14.284V15H4.62722C4.62222 14.766 4.62222 14.456 4.63422 14.091C4.66222 13.255 4.75422 12.151 5.01122 11.053C5.26822 9.949 5.68122 8.894 6.32322 8.123C6.95022 7.372 7.80122 6.878 9.00722 6.878C9.13983 6.878 9.267 6.82532 9.36077 6.73155C9.45454 6.63778 9.50722 6.51061 9.50722 6.378V2.446C9.50722 1.652 10.1462 1.007 10.9372 1H10.9382Z" fill="#8588A3"></path></svg>
-                      <select className="px-5 md:w-36 w-full py-3 bg-i-gray-2 dark:bg-i-neutral-2 text-sm text-i-foreground focus:outline-none" id="animal">
+                      <select
+                        onChange={(e) => { setFormState({ ...formState, animal: e.currentTarget.value }) }}
+                        className="px-5 md:w-36 w-full py-3 bg-i-gray-2 dark:bg-i-neutral-2 text-sm text-i-foreground focus:outline-none" id="animal">
                         <option value=""> All Animals</option>
                         <option value="bird">bird</option>
                         <option value="cat">cat</option>
@@ -172,7 +115,9 @@ const IndexPage: React.FC = () => {
                     </div>
                     <div className="relative flex items-center">
                       <svg className="absolute -left-2" width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 10.0705V8C12.5 7.73478 12.3946 7.48043 12.2071 7.29289C12.0196 7.10536 11.7652 7 11.5 7H7.5V5H8.5C8.76514 4.99974 9.01934 4.89429 9.20682 4.70681C9.3943 4.51934 9.49974 4.26514 9.5 4V1C9.49974 0.734865 9.3943 0.480665 9.20682 0.293186C9.01934 0.105707 8.76514 0.000264738 8.5 0H5.5C5.23487 0.000264738 4.98067 0.105707 4.79319 0.293186C4.60571 0.480665 4.50027 0.734865 4.5 1V4C4.50027 4.26514 4.60571 4.51934 4.79319 4.70681C4.98067 4.89429 5.23487 4.99974 5.5 5H6.5V7H2.5C2.23479 7 1.98043 7.10536 1.7929 7.29289C1.60536 7.48043 1.5 7.73478 1.5 8V10.071C1.02868 10.1927 0.61791 10.4821 0.344704 10.885C0.0714978 11.2879 -0.0453918 11.7766 0.0159455 12.2595C0.0772827 12.7424 0.312636 13.1864 0.677889 13.5082C1.04314 13.83 1.51322 14.0075 2 14.0075C2.48679 14.0075 2.95687 13.83 3.32212 13.5082C3.68737 13.1864 3.92273 12.7424 3.98406 12.2595C4.0454 11.7766 3.92851 11.2879 3.65531 10.885C3.3821 10.4821 2.97133 10.1927 2.5 10.071V8H6.5V10.071C6.02868 10.1927 5.61791 10.4821 5.3447 10.885C5.0715 11.2879 4.95461 11.7766 5.01595 12.2595C5.07728 12.7424 5.31264 13.1864 5.67789 13.5082C6.04314 13.83 6.51322 14.0075 7 14.0075C7.48679 14.0075 7.95687 13.83 8.32212 13.5082C8.68737 13.1864 8.92273 12.7424 8.98406 12.2595C9.0454 11.7766 8.92851 11.2879 8.65531 10.885C8.3821 10.4821 7.97133 10.1927 7.5 10.071V8H11.5V10.0705C11.0287 10.1922 10.6179 10.4816 10.3447 10.8845C10.0715 11.2874 9.95461 11.7761 10.0159 12.259C10.0773 12.7419 10.3126 13.1859 10.6779 13.5077C11.0431 13.8295 11.5132 14.007 12 14.007C12.4868 14.007 12.9569 13.8295 13.3221 13.5077C13.6874 13.1859 13.9227 12.7419 13.9841 12.259C14.0454 11.7761 13.9285 11.2874 13.6553 10.8845C13.3821 10.4816 12.9713 10.1922 12.5 10.0705ZM5.5 1H8.5L8.5005 4H5.5V1ZM3 12C3 12.1978 2.94136 12.3911 2.83147 12.5556C2.72159 12.72 2.56541 12.8482 2.38269 12.9239C2.19996 12.9996 1.9989 13.0194 1.80491 12.9808C1.61093 12.9422 1.43275 12.847 1.2929 12.7071C1.15305 12.5673 1.0578 12.3891 1.01922 12.1951C0.980634 12.0011 1.00044 11.8 1.07613 11.6173C1.15181 11.4346 1.27999 11.2784 1.44443 11.1685C1.60888 11.0586 1.80222 11 2 11C2.26514 11.0003 2.51934 11.1057 2.70682 11.2932C2.8943 11.4807 2.99974 11.7349 3 12ZM8 12C8 12.1978 7.94136 12.3911 7.83147 12.5556C7.72159 12.72 7.56541 12.8482 7.38269 12.9239C7.19996 12.9996 6.9989 13.0194 6.80491 12.9808C6.61093 12.9422 6.43275 12.847 6.2929 12.7071C6.15305 12.5673 6.0578 12.3891 6.01922 12.1951C5.98063 12.0011 6.00044 11.8 6.07613 11.6173C6.15181 11.4346 6.27999 11.2784 6.44443 11.1685C6.60888 11.0586 6.80222 11 7 11C7.2651 11.0004 7.51922 11.1059 7.70667 11.2933C7.89412 11.4808 7.99961 11.7349 8 12ZM12 13C11.8022 13 11.6089 12.9414 11.4444 12.8315C11.28 12.7216 11.1518 12.5654 11.0761 12.3827C11.0004 12.2 10.9806 11.9989 11.0192 11.8049C11.0578 11.6109 11.153 11.4327 11.2929 11.2929C11.4328 11.153 11.6109 11.0578 11.8049 11.0192C11.9989 10.9806 12.2 11.0004 12.3827 11.0761C12.5654 11.1518 12.7216 11.28 12.8315 11.4444C12.9414 11.6089 13 11.8022 13 12C12.9997 12.2651 12.8943 12.5193 12.7068 12.7068C12.5193 12.8943 12.2651 12.9997 12 13Z" fill="#8588A3"></path></svg>
-                      <select className="px-5 md:w-36 w-full py-3 bg-i-gray-2 dark:bg-i-neutral-2 text-sm text-i-foreground focus:outline-none" id="breed">
+                      <select
+                        onChange={(e) => { setFormState({ ...formState, breed: e.currentTarget.value }) }}
+                        className="px-5 md:w-36 w-full py-3 bg-i-gray-2 dark:bg-i-neutral-2 text-sm text-i-foreground focus:outline-none" id="breed">
                         <option value=""> All Breeds</option>
                       </select>
                     </div>
@@ -215,6 +160,22 @@ const IndexPage: React.FC = () => {
         </header>
         <section className="md:px-16 px-5">
           <h1 className="text-2xl font-medium pt-8 md:pt-16 dark:text-gray-300">Search Results</h1>
+
+          {error && byError &&
+            <div className="m-auto rounded-xl mt-3 space-y-6">
+              <div className="flex gap-4 bg-red-100 dark:bg-i-neutral-2  p-4 rounded-md">
+                <div className="w-max">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-b from-red-100 to-red-300 text-red-700">
+                    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm3.5 12.09l-1.41 1.41L12 13.42 9.91 15.5 8.5 14.09 10.59 12 8.5 9.91 9.91 8.5 12 10.59l2.09-2.09 1.41 1.41L13.42 12l2.08 2.09z"></path></svg>
+                  </div>
+                </div>
+                <div className="space-y-1 text-sm">
+                  <h6 className="font-medium text-red-900">Fatal error</h6>
+                  <p className="text-red-700 leading-tight">Your internet connection was lost, we can't get you a pet.</p>
+                </div>
+              </div>
+            </div>
+          }
           <div className={clsx('grid grid-cols-1 gap-2 my-5 w-full', 'md:grid-cols-2 md:gap-2', 'lg:grid-cols-3 lg:gap-3')}>
             {(!error && !data) && skeletonCount?.map((item, index) => (
               <div key={index} className=" bg-white dark:bg-i-neutral border border-graywhite dark:border-kiwi2 px-5 py-5 rounded-xl">
@@ -249,21 +210,6 @@ const IndexPage: React.FC = () => {
 
         <section className="md:px-16 px-5">
           <h1 className="text-4xl font-semibold md:pt-16 pt-10 text-gray3 dark:text-gray-300 capitalize">{param}</h1>
-          {byError &&
-            <div className="m-auto rounded-xl mt-3 space-y-6">
-              <div className="flex gap-4 bg-red-100 dark:bg-i-neutral-2  p-4 rounded-md">
-                <div className="w-max">
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-b from-red-100 to-red-300 text-red-700">
-                    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm3.5 12.09l-1.41 1.41L12 13.42 9.91 15.5 8.5 14.09 10.59 12 8.5 9.91 9.91 8.5 12 10.59l2.09-2.09 1.41 1.41L13.42 12l2.08 2.09z"></path></svg>
-                  </div>
-                </div>
-                <div className="space-y-1 text-sm">
-                  <h6 className="font-medium text-red-900">Fatal error</h6>
-                  <p className="text-red-700 leading-tight">Your internet connection was lost, we can't get you a pet.</p>
-                </div>
-              </div>
-            </div>
-          }
           <div className={clsx('grid grid-cols-1 gap-2 my-5 w-full', 'md:grid-cols-2 md:gap-2', 'lg:grid-cols-3 lg:gap-3')}>
             {(!byError && !byData) && skeletonCount?.map((item, index) => (
               <div key={index} className=" bg-white dark:bg-i-neutral border border-graywhite dark:border-kiwi2 px-5 py-5 rounded-xl">
@@ -272,13 +218,11 @@ const IndexPage: React.FC = () => {
             ))}
             {byData && byData.pets?.map(({ ...pet }: PetCardPropsType, index: number) => (
               <div key={index} className="key">
-                <PetCard {...pet}/> {/* Spread syntax */}
+                <PetCard {...pet} /> {/* Spread syntax */}
               </div>
             ))}
           </div>
         </section>
-        <MFooter theme={theme} />
-      </div>
     </>
 
   )
