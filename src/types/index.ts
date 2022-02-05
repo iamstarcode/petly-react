@@ -10,6 +10,7 @@ export type PetCardPropsType = {
     city:string,
     state:string,
     images:string[]
+    id:number
 }
 
 export interface TabsType{

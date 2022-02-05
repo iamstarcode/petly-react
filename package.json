@@ -19,17 +19,13 @@
     "@tailwindcss/forms": "^0.4.0",
     "@vechaiui/core": "^0.6.0",
     "@vechaiui/react": "^0.2.1",
-    "axios": "^0.25.0",
     "clsx": "^1.1.1",
     "jotai": "^1.5.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-router-dom": "^6.2.1",
-<<<<<<< HEAD
     "swiper": "^7.4.1",
-=======
->>>>>>> 5721f27c378fa1e0fa5c7fdf0e42df866cec1d9d
     "swr": "^1.2.0"
   },
   "devDependencies": {
