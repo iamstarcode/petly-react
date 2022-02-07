@@ -34,7 +34,7 @@ const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state,id}
                 <span className="block">
                     <h1 className="text-2xl text-gray3 font-medium m-0 dark:text-white">{name}</h1>
                     <span className="text-sm text-gray7 block leading-none relative -top-1 dark:text-gray-400">{city}</span></span>
-                <img src={svgSrc} alt={animal} />
+                <img src={`/${svgSrc}.svg`} alt={animal} />
             </div>
             <div className="flex justify-between items-center py-1">
                 <Link className="bg-i-primary text-white px-2 py-3 rounded-full text-sm" to={`details/${id}`}>View Details</Link>
