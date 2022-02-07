@@ -1,32 +1,10 @@
 import * as React from 'react';
 import {PetCardPropsType} from '@/types/index'
-import dog from '@/assets/img/dog.svg'
-import cat from '@/assets/img/cat.svg'
-import bird from '@/assets/img/bird.svg'
-import rabbit from '@/assets/img/rabbit.svg'
-import reptile from '@/assets/img/reptile.svg'
 import { Link } from 'react-router-dom';
 import { getLinkForProxy } from '@/utils/proxy';
 
 const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state,id}) => {
-    let svgSrc=""
-    switch(animal){
-        case'dog':
-        svgSrc = dog
-        break;
-        case'cat':
-        svgSrc = cat
-        break;
-        case'bird':
-        svgSrc = bird
-        break;
-        case'rabbit':
-        svgSrc = rabbit
-        break;
-        case'reptile':
-        svgSrc = reptile
-        break;
-    }
+    
     return <>
         <div className="bg-white dark:bg-i-neutral border border-graywhite dark:border-gray-800 px-5 py-5 rounded-xl">
             <img src={getLinkForProxy(images[0])} className="w-full h-48 rounded-xl object-cover " alt={name} />
@@ -34,7 +12,7 @@ const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state,id}
                 <span className="block">
                     <h1 className="text-2xl text-gray3 font-medium m-0 dark:text-white">{name}</h1>
                     <span className="text-sm text-gray7 block leading-none relative -top-1 dark:text-gray-400">{city}</span></span>
-                <img src={`/${svgSrc}.svg`} alt={animal} />
+                <img src={`/img/${animal}.svg`} alt={animal} />
             </div>
             <div className="flex justify-between items-center py-1">
                 <Link className="bg-i-primary text-white px-2 py-3 rounded-full text-sm" to={`details/${id}`}>View Details</Link>

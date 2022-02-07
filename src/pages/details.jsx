@@ -26,7 +26,6 @@ const Details = () => {
   const { data, error } = useSWR(`https://pets-v2.dev-apis.com/pets?id=${params.id}`, fetcher)
 
   const pet = !!data ? data.pets[0] : null
-  console.log(pet)
 
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
@@ -53,7 +52,7 @@ const Details = () => {
                     <span>{pet.breed}</span>
                   </div>
                 </div>
-                <div><img src={`/src/assets/img/${pet.animal}.svg`} /></div>
+                <div><img src={`/img/${pet.animal}.svg`} /></div>
               </div>
             </div>
 

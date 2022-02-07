@@ -1,24 +1,19 @@
 import * as React from 'react';
-import { useEffect } from 'react';
-import ballrolls from '@/assets/img/ballrolls.svg'
-import fan from '@/assets/img/fan.svg'
-import angle from '@/assets/img/angle.svg'
 import { useState } from 'react';
 import useTheme from '@/hooks/useTheme';
 
 
 const MFooter = () => {
-    const [isMenuOpen, setMenuOpen] = useState(false);
     const { theme, toggleTheme } = useTheme()
     /*  useEffect(()=>{
          console.log(theme)
      },[theme]) */
     return <>
         <div className="w-screen md:h-[530px] bg-i-gray-2 dark:bg-i-neutral-2 relative p-5 md:p-0">
-            <img className="md:block hidden absolute left-0" src={ballrolls} alt="Ball Rolls" />
-            <img className="md:block hidden absolute left-36 bottom-36" src={fan} alt="Fan" />
-            <img className="md:block hidden absolute right-0" src={angle} alt="Inverted Angles" />
-            <img className="md:block hidden absolute right-32 top-48" src={ballrolls} alt="Ball Rolls" />
+            <img className="md:block hidden absolute left-0" src="/img/ballrolls.svg" alt="Ball Rolls" />
+            <img className="md:block hidden absolute left-36 bottom-36" src="/img/fan.svg" alt="Fan" />
+            <img className="md:block hidden absolute right-0" src="/img/angle.svg" alt="Inverted Angles" />
+            <img className="md:block hidden absolute right-32 top-48" src="/img/ballrolls.svg" alt="Ball Rolls" />
             <div className="flex justify-center">
                 <div className="md:pt-44 pt-10 z-50">
                     <h1 className="md:text-6xl text-3xl font-semibold text-slate-600/90 dark:text-i-gray-2">
