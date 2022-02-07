@@ -1,4 +1,3 @@
-import { type } from 'os';
 import * as React from 'react';
 import {PetCardPropsType} from '@/types/index'
 import dog from '@/assets/img/dog.svg'
@@ -7,7 +6,7 @@ import bird from '@/assets/img/bird.svg'
 import rabbit from '@/assets/img/rabbit.svg'
 import reptile from '@/assets/img/reptile.svg'
 import { Link } from 'react-router-dom';
-
+import { getLinkForProxy } from '@/utils/proxy';
 
 const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state,id}) => {
     let svgSrc=""
@@ -48,13 +47,5 @@ const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state,id}
     </>;
 };
 
-const getLinkForProxy = (link :string) =>{
-
-    const proxyUrl = 'https://image-proxy-2.herokuapp.com/'
-    const pos = link.lastIndexOf('/')
-    const subString = link.substring(pos+1, link.length)
-    console.log(subString)
-    return proxyUrl+subString
-}
 export default PetCard;
 
