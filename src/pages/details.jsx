@@ -77,7 +77,7 @@ const Details = () => {
                   >
                     {pet.images.map((i, index) =>
                       <SwiperSlide key={index}>
-                        {<img className="rounded-md object-cover w-full h-[260px] sm:h-[320px] md:h-[380px]" src={getLinkForproxy(pet.images[index])} alt="dog image" />}
+                        {<img className="rounded-md object-cover w-full h-[260px] sm:h-[320px] md:h-[380px]" src={getLinkForProxy(pet.images[index])} alt="dog image" />}
                       </SwiperSlide>
                     )}
                   </Swiper>
@@ -94,7 +94,7 @@ const Details = () => {
                   >
                     {pet.images.map((i, index) =>
                       <SwiperSlide key={index}>
-                        {<img className="rounded-md object-cover w-full" src={getLinkForproxy(pet.images[index])} alt="dog image" />}
+                        {<img className="rounded-md object-cover w-full" src={getLinkForProxy(pet.images[index])} alt="dog image" />}
                       </SwiperSlide>
                     )}
                   </Swiper>
