@@ -30,7 +30,7 @@ const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state,id}
     }
     return <>
         <div className="bg-white dark:bg-i-neutral border border-graywhite dark:border-gray-800 px-5 py-5 rounded-xl">
-            <img src={images[0]} className="w-full h-48 rounded-xl object-cover " alt={name} />
+            <img src={getLinkForProxy(images[0])} className="w-full h-48 rounded-xl object-cover " alt={name} />
             <div className="flex justify-between items-center py-3">
                 <span className="block">
                     <h1 className="text-2xl text-gray3 font-medium m-0 dark:text-white">{name}</h1>
@@ -48,5 +48,13 @@ const PetCard: React.VFC<PetCardPropsType> = ({name,animal,city,images,state,id}
     </>;
 };
 
+const getLinkForProxy = (link :string) =>{
+
+    const proxyUrl = 'https://image-proxy-2.herokuapp.com/'
+    const pos = link.lastIndexOf('/')
+    const subString = link.substring(pos+1, link.length)
+    console.log(subString)
+    return proxyUrl+subString
+}
 export default PetCard;
 

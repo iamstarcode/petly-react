@@ -3,8 +3,7 @@ import * as React from 'react';
 import { useParams } from 'react-router';
 import useSWR from 'swr';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-
+import { getLinkForProxy } from '@/utils/proxy';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
 import "swiper/css/free-mode";
@@ -63,7 +62,7 @@ const Details = () => {
               "md:px-5 md:py-6")}>
               <h2 className="py-2 text-xl md:text-2xl font-medium text-i-foreground dark:text-i-gray-2">Luna Pictures</h2>
               <div className="flex-col">
-                <div className="mt-5 bg-white dark:bg-i-neutral-1 px-3 py-3 rounded-md">
+                <div className="mt-5 bg-white dark:bg-i-neutral-1 px-1 py-1 rounded-md">
 
                   <Swiper
                     style={{
@@ -71,14 +70,14 @@ const Details = () => {
                       "--swiper-pagination-color": "#fff",
                     }}
                     spaceBetween={10}
-                    navigation={true}
+                    navigation={false}
                     thumbs={{ swiper: thumbsSwiper }}
                     modules={[FreeMode, Navigation, Thumbs]}
                     className=""
                   >
                     {pet.images.map((i, index) =>
                       <SwiperSlide key={index}>
-                        {<img className="rounded-md object-cover w-full h-[260px] sm:h-[320px] md:h-[380px]" src={pet.images[index]} alt="dog image" />}
+                        {<img className="rounded-md object-cover w-full h-[260px] sm:h-[320px] md:h-[380px]" src={getLinkForproxy(pet.images[index])} alt="dog image" />}
                       </SwiperSlide>
                     )}
                   </Swiper>
@@ -95,7 +94,7 @@ const Details = () => {
                   >
                     {pet.images.map((i, index) =>
                       <SwiperSlide key={index}>
-                        {<img className="rounded-md object-cover w-full" src={pet.images[index]} alt="dog image" />}
+                        {<img className="rounded-md object-cover w-full" src={getLinkForproxy(pet.images[index])} alt="dog image" />}
                       </SwiperSlide>
                     )}
                   </Swiper>
@@ -125,8 +124,6 @@ const Details = () => {
             </div>
           </div>
         </div>}
-
-
       </div>
 
     </>
