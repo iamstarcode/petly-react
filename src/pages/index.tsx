@@ -203,7 +203,7 @@ const IndexPage: React.FC = () => {
                 className={clsx("bg-graywhite dark:bg-i-neutral-2 text-slate-400 md:w-[115px] w-full md:h-[105px] h-16 border-2 border-transparent rounded-xl flex justify-center items-center",
                   { 'border-2 border-i-primary': item.active },'mb-2 md:mb-0')}>
                 <span className="md:block flex space-x-3 md:space-x-0">
-                  <img src={`/src/assets/img/${item.name}.svg`} alt={`${item.name}s`} />
+                  <img src={`/img/${item.name}.svg`} alt={`${item.name}s`} />
                   <span className="block text-lg capitalize">{item.name}</span>
                 </span>
               </button>
