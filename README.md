@@ -1,11 +1,10 @@
-# <p align="center">⚙️ Stravital</p>
+# <p align="center"> Petly </p>
 
-Stravital is a minimalist starter template, it includes:
-
+Dot campus petly app challenge:
+[Live Site](https://petlly.iamstarcode.com/)
 - ⚡️ Vite
 - ⚛️ React 17
 - 🏄 React Router DOM
-- 💎 TypeScript (of course)
 - 💨 Tailwind CSS
 - 🔨 Eslint
 - 🌀 Prettier
