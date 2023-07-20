@@ -6,7 +6,7 @@ export type LayoutMainProps = {
   children?: React.ReactNode
 }
 
-const LayoutMain = ({ children }: LayoutMainProps): JSX.Element => {
+const LayoutMain = (): JSX.Element => {
   return (
     <>
 
